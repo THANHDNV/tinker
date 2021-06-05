@@ -6,12 +6,14 @@ interface ICustomSWR {
 	path: string;
 	method?: string;
 	query?: any;
+	shouldFetch?: boolean
 }
 
 const useCustomSWR = ({
 	path,
 	method = 'get',
-	query
+	query,
+	shouldFetch = true
 }: ICustomSWR) => {
 	const fullUrl = buildUrl('', {
 		path,
@@ -19,7 +21,7 @@ const useCustomSWR = ({
 	})
 
 	return useSWR(
-		fullUrl,
+		shouldFetch ? fullUrl : null,
 		request({
 			path: fullUrl,
 			method

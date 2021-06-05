@@ -1,60 +1,46 @@
-import React, { useMemo } from 'react';
-import { Box, Grid, makeStyles, Button, Container, Typography } from '@material-ui/core';
-import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
+import React, { useEffect, useMemo } from 'react';
+import { Box, makeStyles, Container, Typography } from '@material-ui/core';
+import { differenceInYears } from 'date-fns';
+import { useLazyFetchUserDetail } from '../store/api/user';
 
 const useStyles = makeStyles((theme) => ({
 	image: {
 		width: '100%',
-		height: '70%'
-	},
-	button: {
-		width: "100%",
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		minHeight: "40px"
+		height: '65%'
 	},
 	infoWrapper: {
 		flex: 1,
-		padding: theme.spacing(3)
+		padding: theme.spacing(3),
+		boxSizing: 'border-box'
 	},
-	actionWrapper: {
-		flex: 0,
-		borderTop: "1px solid #f1f2f4"
-	}
 }))
 
 interface ITinkerCard {
 	id: string;
 	fullName: string;
 	imageUrl: string;
+	isShowing?: boolean;
 	className?: any;
-	onLike?: (id: string) => void;
-	onPass?: (id: string) => void;
 }
 
 const TinkerCard = ({
 	id,
 	fullName,
 	imageUrl,
-	onLike,
-	onPass,
+	isShowing = false,
 	className
 }: ITinkerCard) => {
+	const { data, loading, setFetch} = useLazyFetchUserDetail(id);
+
 	const classes = useStyles();
 
-	const onClickLike = () => {
-		if (onLike) {
-			onLike(id);
-		}
-	}
+	useEffect(() => {
+		setFetch(isShowing);
+	}, [isShowing])
 
-	const onClickPass = () => {
-		if (onPass) {
-			onPass(id);
-		}
-	}
+	const age = useMemo(() => {
+		return isShowing && !loading && !!data ? differenceInYears(new Date(), new Date(data.dateOfBirth)) : 0;
+	}, [isShowing, loading, data])
 
 	return(
 		<Box display='flex' flexDirection='column' className={className}>
@@ -62,22 +48,10 @@ const TinkerCard = ({
 			<Box width="100%" className={classes.infoWrapper}>
 				<Container>
 					<Typography variant="h6">
-						{fullName}
+						{[fullName, age].join(' ')}
 					</Typography>
 				</Container>
 			</Box>
-			<Grid container className={classes.actionWrapper}>
-				<Grid item xs={6}>
-					<Button className={classes.button} variant="text" onClick={onClickPass}>
-						<ClearRoundedIcon />
-					</Button>
-				</Grid>
-				<Grid item xs={6}>
-					<Button className={classes.button} variant="text" onClick={onClickLike}>
-						<FavoriteBorderOutlinedIcon />
-					</Button>
-				</Grid>
-			</Grid>
 		</Box>
 	)
 }
