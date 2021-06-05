@@ -33,7 +33,6 @@ const TinkerCard = ({
 	className
 }: ITinkerCard) => {
 	const { data, loading, isFetching, setFetch} = useLazyFetchUserDetail(id);
-	console.log(id, isNext);
 
 	const classes = useStyles();
 

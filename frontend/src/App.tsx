@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 function App() {
 	const classes = useStyles();
 	const [page, setPage] = useState(0);
-	const [prefetchPage, setPrefetchPage] = useState(1);
+	const [prefetchPage, setPrefetchPage] = useState(0);
 	const { data: { data } = { data: []}, loading } = useFetchUsers({
 		page
 	});

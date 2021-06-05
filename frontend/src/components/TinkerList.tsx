@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Box, makeStyles, Grid, Button } from '@material-ui/core'
+import { Box, makeStyles, Grid, Button, Fade } from '@material-ui/core'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import TinkerCard from './TinkerCard';
@@ -98,7 +98,7 @@ const TinkerList = ({
 	const onClickLike = () => {
 		const foundIndex = users.findIndex((user) => user.id === activeUser);
 		if (foundIndex < users.length - 1) {
-			if (foundIndex === users.length - 3) {
+			if (foundIndex === Math.round((users.length - 1) / 2)) {
 				if (onPrefetch) {
 					onPrefetch();
 				}
@@ -117,20 +117,20 @@ const TinkerList = ({
 			<Box width='100%' height="100%" display='flex' flexDirection='column'>
 				<Box flex="1" position='relative' >
 					{users.map((user, index) => (
-						<Box
-							key={user.id}
-							className={classes.cardWrapper}
-							display={activeUser === user.id ? 'block' : 'none'}
-						>
-							<TinkerCard
-								id={user.id}
-								fullName={[user.firstName, user.lastName].join(' ')}
-								imageUrl={user.picture}
-								className={classes.card}
-								isShowing={activeUser === user.id}
-								isNext={nextUser === user.id}
-							/>
-						</Box>
+						<Fade key={user.id} in={activeUser === user.id} timeout={500}>
+							<Box
+								className={classes.cardWrapper}
+							>
+								<TinkerCard
+									id={user.id}
+									fullName={[user.firstName, user.lastName].join(' ')}
+									imageUrl={user.picture}
+									className={classes.card}
+									isShowing={activeUser === user.id}
+									isNext={nextUser === user.id}
+								/>
+							</Box>
+						</Fade>
 					))}
 				</Box>
 				<Box flex={0} className={classes.actionWrapper}>
