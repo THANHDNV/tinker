@@ -20,6 +20,7 @@ interface ITinkerCard {
 	fullName: string;
 	imageUrl: string;
 	isShowing?: boolean;
+	isNext?: boolean;
 	className?: any;
 }
 
@@ -28,15 +29,19 @@ const TinkerCard = ({
 	fullName,
 	imageUrl,
 	isShowing = false,
+	isNext = false,
 	className
 }: ITinkerCard) => {
-	const { data, loading, setFetch} = useLazyFetchUserDetail(id);
+	const { data, loading, isFetching, setFetch} = useLazyFetchUserDetail(id);
+	console.log(id, isNext);
 
 	const classes = useStyles();
 
 	useEffect(() => {
-		setFetch(isShowing);
-	}, [isShowing])
+		if (!isFetching) {
+			setFetch(isShowing || isNext);
+		}
+	}, [isShowing, isNext, isFetching])
 
 	const age = useMemo(() => {
 		return isShowing && !loading && !!data ? differenceInYears(new Date(), new Date(data.dateOfBirth)) : 0;

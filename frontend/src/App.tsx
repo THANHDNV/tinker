@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CircularProgress, Box, Container, makeStyles } from '@material-ui/core'
-import { useFetchUsers } from './store/api/user';
+import { useFetchUsers, useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +40,15 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
 	const classes = useStyles();
-	const { data: { data } = { data: []}, loading, error } = useFetchUsers();
+	const [page, setPage] = useState(0);
+	const [prefetchPage, setPrefetchPage] = useState(1);
+	const { data: { data } = { data: []}, loading } = useFetchUsers({
+		page
+	});
+
+	const { setFetch, isFetching: isPreFetching  } = useLazyFetchUsers({
+		page: prefetchPage
+	});
 
 	if (loading) {
 		return (
@@ -54,10 +62,21 @@ function App() {
 		)
 	}
 
+	const onFetchNextPage = () => {
+		setPage((p) => p + 1);
+	}
+
+	const onPrefetch = () => {
+		setPrefetchPage((p) => p + 1)
+		if (!isPreFetching ) {
+			setFetch(true);
+		}
+	}
+
   return (
 		<Box minWidth="100wh" minHeight="100vh" className={classes.wrapper} >
 			<Container className={classes.container}>
-				<TinkerList users={data} className={classes.list} />
+				<TinkerList users={data} className={classes.list} onPrefetch={onPrefetch} onFetchNextPage={onFetchNextPage} />
 			</Container>
 		</Box>
   );
