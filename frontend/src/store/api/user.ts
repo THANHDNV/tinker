@@ -6,15 +6,46 @@ interface IFetchUser {
 	page?: number;
 }
 
+interface IUser {
+	id: string;
+	firstName: string;
+	lastName: string;
+	picture: string;
+}
+
+interface IGetListUser {
+	data: IUser[];
+	limit: number;
+	offset: number;
+	page: number;
+	total: number;
+}
+
+interface IUserDetail extends IUser {
+	dateOfBirth: string;
+	gender: "male" | "female" | "other" | "";
+}
+
+interface IFetchReturn<DataType, ErrorType = Error> {
+	data?: DataType;
+	error?: ErrorType;
+	loading: boolean;
+}
+
+interface ILazyFetch<DataType, ErrorType = Error> extends IFetchReturn<DataType, ErrorType> {
+	isFetching: boolean,
+	setFetch: (fetch: boolean) => void,
+}
+
 export const useFetchUsers = ({
 	limit = 10,
 	page = 0
-}: IFetchUser = {}) => {
-	const { data, error } = useCustomSWR({
+}: IFetchUser = {}): IFetchReturn<IGetListUser> => {
+	const { data, error } = useCustomSWR<IGetListUser>({
 		path: '/user',
 		query: {
-			limit,
-			page
+			limit: limit.toString(),
+			page: page.toString()
 		}
 	})
 
@@ -28,14 +59,14 @@ export const useFetchUsers = ({
 export const useLazyFetchUsers = ({
 	limit = 10,
 	page = 0
-}: IFetchUser = {}) => {
+}: IFetchUser = {}): ILazyFetch<IGetListUser> => {
 	const [shouldFetch, setShouldFetch] = useState(false);
 
-	const { data, error } = useCustomSWR({
+	const { data, error } = useCustomSWR<IGetListUser>({
 		path: '/user',
 		query: {
-			limit,
-			page
+			limit: limit.toString(),
+			page: page.toString()
 		},
 		shouldFetch
 	})
@@ -50,10 +81,10 @@ export const useLazyFetchUsers = ({
 }
 
 
-export const useLazyFetchUserDetail = (id: string) => {
+export const useLazyFetchUserDetail = (id: string): ILazyFetch<IUserDetail> => {
 	const [shouldFetch, setShouldFetch] = useState(false);
 
-	const { data, error } = useCustomSWR({
+	const { data, error } = useCustomSWR<IUserDetail>({
 		path: `/user/${id}`,
 		shouldFetch
 	})

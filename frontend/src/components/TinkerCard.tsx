@@ -21,7 +21,7 @@ interface ITinkerCard {
 	imageUrl: string;
 	isShowing?: boolean;
 	isNext?: boolean;
-	className?: any;
+	className?: string;
 }
 
 const TinkerCard = ({
@@ -31,7 +31,7 @@ const TinkerCard = ({
 	isShowing = false,
 	isNext = false,
 	className
-}: ITinkerCard) => {
+}: ITinkerCard): JSX.Element => {
 	const { data, loading, isFetching, setFetch} = useLazyFetchUserDetail(id);
 
 	const classes = useStyles();

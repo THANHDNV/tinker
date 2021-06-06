@@ -5,10 +5,15 @@ import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import TinkerCard from './TinkerCard';
 
 interface ITinkerList {
-	users?: any[];
+	users?: Array<{
+		id: string;
+		firstName: string;
+		lastName: string;
+		picture: string;
+	}>;
 	onPrefetch?: () => void;
 	onFetchNextPage?: () => void;
-	className?: any;
+	className?: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -49,9 +54,9 @@ const TinkerList = ({
 	onPrefetch,
 	onFetchNextPage,
 	className
-}: ITinkerList) => {
+}: ITinkerList): JSX.Element | null => {
 	const classes = useStyles();
-	const [activeUser, setActiveUser] = useState();
+	const [activeUser, setActiveUser] = useState<string | undefined>();
 
 	const nextUser = useMemo(() => {
 		if (!activeUser) {
@@ -116,7 +121,7 @@ const TinkerList = ({
 		<Box className={className}>
 			<Box width='100%' height="100%" display='flex' flexDirection='column'>
 				<Box flex="1" position='relative' >
-					{users.map((user, index) => (
+					{users.map((user) => (
 						<Fade key={user.id} in={activeUser === user.id} timeout={500}>
 							<Box
 								className={classes.cardWrapper}

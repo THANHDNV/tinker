@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }))
 
-function App() {
+function App(): React.ReactElement {
 	const classes = useStyles();
 	const [page, setPage] = useState(0);
 	const [prefetchPage, setPrefetchPage] = useState(0);

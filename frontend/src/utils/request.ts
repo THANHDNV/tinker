@@ -1,14 +1,14 @@
 import fetch from 'isomorphic-fetch';
 import buildUrl from 'build-url';
 
-interface IRequestParams {
+interface IRequestParams<BodyType> {
 	url?: string;
 	path?: string;
 	method?: string;
-	body?: any;
+	body?: BodyType;
 }
 
-const request = (params: IRequestParams = {}) => () => {
+const request = <ReponseDataType, BodyType>(params: IRequestParams<BodyType> = {}) => (): Promise<ReponseDataType> => {
 	const {
 		url = process.env.REACT_APP_API_URL,
 		path = '/',
@@ -18,13 +18,12 @@ const request = (params: IRequestParams = {}) => () => {
 
 	const fullUrl = buildUrl(url as string, { path })
 
-	const headers: any = {
-		'app-id': process.env.REACT_APP_APP_ID
-	}
+	const headers: HeadersInit = new Headers();
+	headers.set('app-id', process.env.REACT_APP_APP_ID as string)
 
 	return fetch(fullUrl, {
 		method,
-		body,
+		body: JSON.stringify(body),
 		headers
 	}).then((response) => response.json());
 }

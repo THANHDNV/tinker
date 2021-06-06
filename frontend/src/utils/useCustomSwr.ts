@@ -1,28 +1,30 @@
-import useSWR from 'swr';
+import useSWR, { SWRResponse } from 'swr';
 import buildUrl from 'build-url';
 import request from './request';
 
 interface ICustomSWR {
 	path: string;
 	method?: string;
-	query?: any;
+	query?: {
+		[name: string]: string | string[]
+	};
 	shouldFetch?: boolean
 }
 
-const useCustomSWR = ({
+const useCustomSWR = <ReponseDataType, BodyType = never, ErrorType = Error>({
 	path,
 	method = 'get',
 	query,
 	shouldFetch = true
-}: ICustomSWR) => {
+}: ICustomSWR): SWRResponse<ReponseDataType, ErrorType> => {
 	const fullUrl = buildUrl('', {
 		path,
 		queryParams: query
 	})
 
-	return useSWR(
+	return useSWR<ReponseDataType, ErrorType>(
 		shouldFetch ? fullUrl : null,
-		request({
+		request<ReponseDataType, BodyType>({
 			path: fullUrl,
 			method
 		})
