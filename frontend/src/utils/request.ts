@@ -1,12 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import buildUrl from 'build-url';
-
-interface IRequestParams<BodyType> {
-	url?: string;
-	path?: string;
-	method?: string;
-	body?: BodyType;
-}
+import { IRequestParams } from '../types';
 
 const request = <ReponseDataType, BodyType>(params: IRequestParams<BodyType> = {}) => (): Promise<ReponseDataType> => {
 	const {

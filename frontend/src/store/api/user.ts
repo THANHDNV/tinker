@@ -1,41 +1,6 @@
 import { useState } from 'react';
 import useCustomSWR from '../../utils/useCustomSwr';
-
-interface IFetchUser {
-	limit?: number;
-	page?: number;
-}
-
-interface IUser {
-	id: string;
-	firstName: string;
-	lastName: string;
-	picture: string;
-}
-
-interface IGetListUser {
-	data: IUser[];
-	limit: number;
-	offset: number;
-	page: number;
-	total: number;
-}
-
-interface IUserDetail extends IUser {
-	dateOfBirth: string;
-	gender: "male" | "female" | "other" | "";
-}
-
-interface IFetchReturn<DataType, ErrorType = Error> {
-	data?: DataType;
-	error?: ErrorType;
-	loading: boolean;
-}
-
-interface ILazyFetch<DataType, ErrorType = Error> extends IFetchReturn<DataType, ErrorType> {
-	isFetching: boolean,
-	setFetch: (fetch: boolean) => void,
-}
+import { IFetchUser, IFetchReturn, IGetListUser, ILazyFetch, IUserDetail } from '../../types';
 
 export const useFetchUsers = ({
 	limit = 10,
