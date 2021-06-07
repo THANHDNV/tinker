@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Box, makeStyles, Container, Typography } from '@material-ui/core';
 import { differenceInYears } from 'date-fns';
 import { useLazyFetchUserDetail } from '../store/api/user';
+import { IUser } from '../types';
 
 const useStyles = makeStyles((theme) => ({
 	image: {
@@ -16,23 +17,19 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 interface ITinkerCard {
-	id: string;
-	fullName: string;
-	imageUrl: string;
+	user: IUser
 	isShowing?: boolean;
 	isNext?: boolean;
 	className?: string;
 }
 
 const TinkerCard = ({
-	id,
-	fullName,
-	imageUrl,
+	user,
 	isShowing = false,
 	isNext = false,
 	className
-}: ITinkerCard): JSX.Element => {
-	const { data, loading, isFetching, setFetch} = useLazyFetchUserDetail(id);
+}: ITinkerCard): JSX.Element | null => {
+	const { data, loading, isFetching, setFetch} = useLazyFetchUserDetail(user.id);
 
 	const classes = useStyles();
 
@@ -46,9 +43,15 @@ const TinkerCard = ({
 		return isShowing && !loading && !!data ? differenceInYears(new Date(), new Date(data.dateOfBirth)) : 0;
 	}, [isShowing, loading, data])
 
+	if (!isShowing) {
+		return null;
+	}
+
+	const fullName = [user.firstName, user.lastName].join(" ");
+
 	return(
 		<Box display='flex' flexDirection='column' className={className}>
-			<img src={imageUrl} alt={fullName} className={classes.image}/>
+			<img src={user.picture} alt={fullName} className={classes.image}/>
 			<Box width="100%" className={classes.infoWrapper}>
 				<Container>
 					<Typography variant="h6">

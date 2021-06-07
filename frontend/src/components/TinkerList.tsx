@@ -58,6 +58,32 @@ const TinkerList = ({
 	const classes = useStyles();
 	const [activeUser, setActiveUser] = useState<string | undefined>();
 
+	const renderUsers = useMemo(() => {
+		if (!activeUser) {
+			return [];
+		}
+
+		const foundIndex = users.findIndex((user) => user.id === activeUser)
+
+		if (foundIndex < 0) {
+			return [];
+		}
+
+		const showingUsers = [];
+
+		if (foundIndex > 0) {
+			showingUsers.push(users[foundIndex - 1])
+		}
+
+		showingUsers.push(users[foundIndex])
+
+		if (users[foundIndex + 1]) {
+			showingUsers.push(users[foundIndex + 1])
+		}
+
+		return showingUsers;
+	}, [activeUser, users]);
+
 	const nextUser = useMemo(() => {
 		if (!activeUser) {
 			return null;
@@ -73,15 +99,28 @@ const TinkerList = ({
 		return null;
 	}, [activeUser]);
 
-	if (users.length === 0) {
-		return null;
-	}
+	const renderUserComponents = useMemo(() => renderUsers.map((user) => (
+		<Fade key={user.id} in={activeUser === user.id} timeout={500}>
+			<Box className={classes.cardWrapper} >
+				<TinkerCard
+					user={user}
+					className={classes.card}
+					isShowing={activeUser === user.id}
+					isNext={nextUser === user.id}
+				/>
+			</Box>
+		</Fade>
+	)), [renderUsers]);
 
 	useEffect(() => {
 		if (users && users.length) {
 			setActiveUser(users[0].id)
 		}
 	}, [users])
+
+	if (users.length === 0) {
+		return null;
+	}
 
 	const onClickPass = () => {
 		const foundIndex = users.findIndex((user) => user.id === activeUser);
@@ -121,22 +160,7 @@ const TinkerList = ({
 		<Box className={className}>
 			<Box width='100%' height="100%" display='flex' flexDirection='column'>
 				<Box flex="1" position='relative' >
-					{users.map((user) => (
-						<Fade key={user.id} in={activeUser === user.id} timeout={500}>
-							<Box
-								className={classes.cardWrapper}
-							>
-								<TinkerCard
-									id={user.id}
-									fullName={[user.firstName, user.lastName].join(' ')}
-									imageUrl={user.picture}
-									className={classes.card}
-									isShowing={activeUser === user.id}
-									isNext={nextUser === user.id}
-								/>
-							</Box>
-						</Fade>
-					))}
+					{renderUserComponents}
 				</Box>
 				<Box flex={0} className={classes.actionWrapper}>
 					<Grid container>
