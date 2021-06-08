@@ -18,4 +18,4 @@ services:
   #   # volumes:
   #   #   - /tinker-api:/app
   #   ports:
-  #     - 3000:3000
+  #     - 4040:4040

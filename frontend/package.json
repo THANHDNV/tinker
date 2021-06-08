@@ -53,5 +53,5 @@
     "eslint": "^7.27.0",
     "eslint-plugin-react": "^7.24.0"
   },
-	"proxy": "https://dummyapi.io/data/api/"
+	"proxy": "http://localhost:4040"
 }

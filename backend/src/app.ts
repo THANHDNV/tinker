@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import router from './controllers';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4040;
 const app = express();
 
 app.use(express.json());

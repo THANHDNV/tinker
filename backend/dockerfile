@@ -12,6 +12,6 @@ RUN yarn
 COPY config/ /app/config/
 COPY src/ /app/src/
 
-EXPOSE 3000
+EXPOSE 4040
 
 CMD ["yarn", "start"]

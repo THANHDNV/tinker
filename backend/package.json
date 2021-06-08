@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
-		"start": "ts-node src/index.ts",
-		"start:db": "yarn migrate && yarn seed",
-		"migrate": "sequelize db:migrate",
-		"seed": "sequelize db:seed --seed 20210608104443-seed-user.js",
+    "start": "ts-node src/index.ts",
+    "start:db": "yarn migrate && yarn seed",
+    "migrate": "sequelize db:migrate",
+    "seed": "sequelize db:seed --seed 20210608104443-seed-user.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "express-validator": "^6.11.1",
     "faker": "^5.5.3",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.3",
