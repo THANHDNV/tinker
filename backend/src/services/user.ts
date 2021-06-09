@@ -16,14 +16,12 @@ interface IGetListResult<T> {
 	total: number;
 }
 
-export const getUserList = async ({ page = 0, limit = 10 }: IGetList = {}, exclude: string[] = []): Promise<IGetListResult<UserAttributes>> => {
+export const getUserList = async (
+	{ page = 0, limit = 10 }: IGetList = {}
+): Promise<IGetListResult<Pick<UserAttributes, "id" | "firstName" | "lastName" | "picture">>> => {
 	const offset = page * limit;
 	const result = await User.findAndCountAll({
-		where: {
-			id: {
-				[Op.not]: exclude
-			}
-		},
+		attributes: ["id", "firstName", "lastName", "picture"],
 		limit,
 		offset,
 	});
@@ -46,6 +44,7 @@ export const getPreference = async (
 	targetId: string
 ): Promise<boolean | null> => {
 	const result = await Preference.findAll({
+		attributes: ["isLiked"],
 		where: {
 			userId,
 			targetId
@@ -64,7 +63,8 @@ export const getPreferenceUserIdList = async (
 	userId: string
 ) => {
 	const result = await Preference.findAll({
-		where: {userId}
+		attributes: ["targetId", "isLiked"],
+		where: { userId }
 	});
 
 	return result.map((r) => r.targetId);
@@ -73,10 +73,11 @@ export const getPreferenceUserIdList = async (
 export const getPreferenceList = async (
 	userId: string,
 	{ page = 0, limit = 10 }: IGetList = {}
-): Promise<IGetListResult<PreferenceAttribute>> => {
+): Promise<IGetListResult<Omit<PreferenceAttribute, "id">>> => {
 	const offset = page * limit;
 
 	const result = await Preference.findAndCountAll({
+		attributes: ["userId", "targetId", "isLiked"],
 		where: {
 			userId
 		},
@@ -97,7 +98,7 @@ export const likeUser = async (
 	currentUserId: string,
 	targetUserId: string,
 	isLiked: boolean
-): Promise<PreferenceAttribute> => {
+): Promise<Omit<PreferenceAttribute, "id">> => {
 	const result = await Preference.create({
 		userId: currentUserId,
 		targetId: targetUserId,

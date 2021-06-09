@@ -27,8 +27,14 @@ router.get(
 			excludeList.push(...await getPreferenceUserIdList(req.headers['user-id'] as string));
 		}
 
+		const { data, ...rest } = await getUserList({ limit: limit, page: page });
+
 		// send user list
-		return res.json(await getUserList({ limit: limit, page: page }, excludeList));
+		return res.json({
+			data,
+			...rest,
+			showed: data.filter((user) => excludeList.some((id) => id === user.id)).map((user) => user.id)
+		});
 	}
 )
 
