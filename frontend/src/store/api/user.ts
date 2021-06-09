@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import useCustomSWR from '../../utils/useCustomSwr';
-import { IFetchUser, IFetchReturn, IGetListUser, ILazyFetch, IUserDetail } from '../../types';
+import { IFetchPagination, IFetchReturn, ILazyFetch, IUserDetail, IFetchListResponse, IUser } from '../../types';
+
+interface IFetchUsersListResponse extends IFetchListResponse<IUser> {
+	showed: string[];
+}
 
 export const useFetchUsers = ({
 	limit = 10,
 	page = 0
-}: IFetchUser = {}): IFetchReturn<IGetListUser> => {
-	const { data, error } = useCustomSWR<IGetListUser>({
+}: IFetchPagination = {}): IFetchReturn<IFetchUsersListResponse> => {
+	const { data, error } = useCustomSWR<IFetchUsersListResponse>({
 		path: '/user',
 		query: {
 			limit: limit.toString(),
@@ -24,10 +28,10 @@ export const useFetchUsers = ({
 export const useLazyFetchUsers = ({
 	limit = 10,
 	page = 0
-}: IFetchUser = {}): ILazyFetch<IGetListUser> => {
+}: IFetchPagination = {}): ILazyFetch<IFetchUsersListResponse> => {
 	const [shouldFetch, setShouldFetch] = useState(false);
 
-	const { data, error } = useCustomSWR<IGetListUser>({
+	const { data, error } = useCustomSWR<IFetchUsersListResponse>({
 		path: '/user',
 		query: {
 			limit: limit.toString(),

@@ -8,6 +8,7 @@ import {
 	getPreference,
 	getPreferenceList,
 	getRandomUserId,
+	getPreferenceByIds
 } from '../services';
 
 const router = Router();
@@ -26,8 +27,20 @@ router.get(
 			excludeList.push(req.headers['user-id'] as string)
 		}
 
+		const userList = await getUserList({ limit: limit, page: page }, excludeList);
+
+		// get list of showed users in fetched list
+
+		const showedList: string[] = [];
+		if (req.headers['user-id']) {
+			showedList.push(...await getPreferenceByIds(req.headers['user-id'] as string, userList.data.map((user) => user.id)))
+		}
+
 		// send user list
-		return res.json(await getUserList({ limit: limit, page: page }, excludeList));
+		return res.json({
+			...userList,
+			showed: showedList
+		});
 	}
 )
 

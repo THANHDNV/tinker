@@ -3,6 +3,7 @@ import { CircularProgress, Box, Container, makeStyles } from '@material-ui/core'
 import { useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
 import { AuthProvider, useAuthContext } from './store/context/auth';
+import { IUser } from './types'
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
@@ -44,8 +45,9 @@ const Layout = () => {
 	const classes = useStyles();
 	const [page, setPage] = useState(0);
 	const [prefetchPage, setPrefetchPage] = useState(0);
+	const [users, setUsers] = useState<IUser[]>([]);
 
-	const { setFetch, data: { data } = { data: []}, loading } = useLazyFetchUsers({
+	const { setFetch, data: { data, showed: showedIds } = { data: [], showed: []}, loading } = useLazyFetchUsers({
 		page
 	});
 
@@ -57,12 +59,25 @@ const Layout = () => {
 		setFetch(!authLoading);
 	}, [authLoading]);
 
+	useEffect(() => {
+		if (data && data.length) {
+			const filteredUser = data.filter((user) => !showedIds.some((id) => id === user.id))
+			
+			if (!filteredUser.length) {
+				setPage((p) => p + 1);
+				return;
+			}
+
+			setUsers(filteredUser);
+		}
+	}, [data, showedIds, setPage])
+
 	const onFetchNextPage = () => {
 		setPage((p) => p + 1);
 	}
 
 	const onPrefetch = () => {
-		setPrefetchPage((p) => p + 1)
+		setPrefetchPage(page + 1)
 		if (!isPreFetching ) {
 			setPreFetch(true);
 		}
@@ -78,7 +93,7 @@ const Layout = () => {
 
 	return (
 		<TinkerList
-			users={data}
+			users={users}
 			className={classes.list}
 			onPrefetch={onPrefetch}
 			onFetchNextPage={onFetchNextPage}

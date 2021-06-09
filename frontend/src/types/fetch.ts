@@ -8,3 +8,16 @@ export interface ILazyFetch<DataType, ErrorType = Error> extends IFetchReturn<Da
 	isFetching: boolean,
 	setFetch: (fetch: boolean) => void,
 }
+
+export interface IFetchPagination {
+	limit?: number;
+	page?: number;
+}
+
+export interface IFetchListResponse<T> {
+	data: T[];
+	limit: number;
+	offset: number;
+	page: number;
+	total: number;
+}

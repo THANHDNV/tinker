@@ -120,10 +120,6 @@ const TinkerList = ({
 		}
 	}, [users])
 
-	if (users.length === 0) {
-		return null;
-	}
-
 	useEffect(() => {
 		const foundIndex = users.findIndex((user) => user.id === activeUser);
 		if (foundIndex > Math.floor((users.length + 1) / 2)) {
@@ -159,6 +155,10 @@ const TinkerList = ({
 		}
 
 		onNext();
+	}
+
+	if (users.length === 0) {
+		return null;
 	}
 
 	return(

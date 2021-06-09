@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
-import { IPreference } from '../../types'
+import { IPreference, IFetchPagination, IFetchListResponse, IFetchReturn } from '../../types'
 import request from '../../utils/request';
+import useCustomSWR from '../../utils/useCustomSwr';
 
 interface ILikeUser {
 	data?: IPreference,
@@ -66,4 +67,23 @@ export const useLike = (): ILikeUser => {
 		loading: isLoading,
 		error
 	};
+}
+
+export const useGetPreference = ({
+	limit = 10,
+	page = 0
+}: IFetchPagination = {}): IFetchReturn<IFetchListResponse<IPreference>> => {
+	const { data, error } = useCustomSWR<IFetchListResponse<IPreference>>({
+		path: '/user/preference',
+		query: {
+			limit: limit.toString(),
+			page: page.toString()
+		}
+	})
+
+	return {
+		data,
+		error,
+		loading: !data && !error
+	}
 }

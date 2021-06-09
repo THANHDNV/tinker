@@ -22,12 +22,16 @@ export const getPreference = async (
 	return null;
 }
 
-export const getPreferenceUserIdList = async (
-	userId: string
+export const getPreferenceByIds = async (
+	userId: string,
+	targetIds: string[]
 ) => {
 	const result = await Preference.findAll({
 		attributes: ["targetId", "isLiked"],
-		where: { userId }
+		where: {
+			userId,
+			targetId: targetIds
+		}
 	});
 
 	return result.map((r) => r.targetId);

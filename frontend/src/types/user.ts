@@ -1,8 +1,3 @@
-export interface IFetchUser {
-	limit?: number;
-	page?: number;
-}
-
 export interface IUser {
 	id: string;
 	firstName: string;
