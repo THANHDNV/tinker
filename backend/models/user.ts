@@ -1,5 +1,7 @@
 import { Sequelize, DataTypes, Model, Optional } from 'sequelize'
-import { sequelize } from './sequelize';
+import getSequelize from './sequelize';
+
+const sequelize = getSequelize();
 
 export interface UserAttributes {
 	id: string;
