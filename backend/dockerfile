@@ -4,12 +4,13 @@ WORKDIR /app
 
 COPY .env /app
 
+COPY config/ /app/config/
 COPY package.json /app
 COPY yarn.lock /app
 
 RUN yarn
 
-COPY config/ /app/config/
+COPY models/ app/models
 COPY src/ /app/src/
 
 EXPOSE 4040

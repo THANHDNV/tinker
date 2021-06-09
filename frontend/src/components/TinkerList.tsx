@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, makeStyles, Grid, Button, Fade } from '@material-ui/core'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import TinkerCard from './TinkerCard';
+import { useLike } from '../store/api/preference';
 
 interface ITinkerList {
 	users?: Array<{
@@ -57,6 +58,7 @@ const TinkerList = ({
 }: ITinkerList): JSX.Element | null => {
 	const classes = useStyles();
 	const [activeUser, setActiveUser] = useState<string | undefined>();
+	const { likeUser } = useLike();
 
 	const renderUsers = useMemo(() => {
 		if (!activeUser) {
@@ -122,14 +124,18 @@ const TinkerList = ({
 		return null;
 	}
 
-	const onClickPass = () => {
+	useEffect(() => {
+		const foundIndex = users.findIndex((user) => user.id === activeUser);
+		if (foundIndex > Math.floor((users.length + 1) / 2)) {
+			if (onPrefetch) {
+				onPrefetch();
+			}
+		}
+	}, [activeUser])
+
+	const onNext = useCallback(() => {
 		const foundIndex = users.findIndex((user) => user.id === activeUser);
 		if (foundIndex < users.length - 1) {
-			if (foundIndex === users.length - 3) {
-				if (onPrefetch) {
-					onPrefetch();
-				}
-			}
 			setActiveUser(users[foundIndex + 1].id)
 			return;
 		}
@@ -137,23 +143,22 @@ const TinkerList = ({
 		if (onFetchNextPage){
 			onFetchNextPage();
 		}
+	}, [users, activeUser, onFetchNextPage]);
+
+	const onClickPass = () => {
+		if (activeUser) {
+			likeUser(false, activeUser);
+		}
+		
+		onNext();
 	}
 
 	const onClickLike = () => {
-		const foundIndex = users.findIndex((user) => user.id === activeUser);
-		if (foundIndex < users.length - 1) {
-			if (foundIndex === Math.round((users.length - 1) / 2)) {
-				if (onPrefetch) {
-					onPrefetch();
-				}
-			}
-			setActiveUser(users[foundIndex + 1].id)
-			return;
+		if (activeUser) {
+			likeUser(true, activeUser);
 		}
 
-		if (onFetchNextPage){
-			onFetchNextPage();
-		}
+		onNext();
 	}
 
 	return(

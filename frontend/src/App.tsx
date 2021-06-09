@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress, Box, Container, makeStyles } from '@material-ui/core'
-import { useFetchUsers, useLazyFetchUsers } from './store/api/user';
+import { useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
 import { AuthProvider, useAuthContext } from './store/context/auth';
 
@@ -55,7 +55,7 @@ const Layout = () => {
 
 	useEffect(() => {
 		setFetch(!authLoading);
-	}, [loading]);
+	}, [authLoading]);
 
 	const onFetchNextPage = () => {
 		setPage((p) => p + 1);
