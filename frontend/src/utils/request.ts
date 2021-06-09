@@ -9,11 +9,16 @@ const request = <ReponseDataType, BodyType>(params: IRequestParams<BodyType> = {
 		method = 'get',
 		body
 	} = params;
+	const userId = localStorage.getItem('user-id')
 
 	const fullUrl = buildUrl(url as string, { path })
 
 	const headers: HeadersInit = new Headers();
 	headers.set('app-id', process.env.REACT_APP_APP_ID as string)
+	
+	if (userId) {
+		headers.set('user-id', userId);
+	}
 
 	return fetch(fullUrl, {
 		method,

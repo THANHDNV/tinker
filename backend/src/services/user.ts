@@ -17,10 +17,16 @@ interface IGetListResult<T> {
 }
 
 export const getUserList = async (
-	{ page = 0, limit = 10 }: IGetList = {}
+	{ page = 0, limit = 10 }: IGetList = {},
+	excludeList: string[] = []
 ): Promise<IGetListResult<Pick<UserAttributes, "id" | "firstName" | "lastName" | "picture">>> => {
 	const offset = page * limit;
 	const result = await User.findAndCountAll({
+		where: {
+			id: {
+				[Op.not]: excludeList
+			}
+		},
 		attributes: ["id", "firstName", "lastName", "picture"],
 		limit,
 		offset,

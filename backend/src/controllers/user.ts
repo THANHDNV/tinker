@@ -8,7 +8,6 @@ import {
 	getPreference,
 	getPreferenceList,
 	getRandomUserId,
-	getPreferenceUserIdList
 } from '../services';
 
 const router = Router();
@@ -21,8 +20,14 @@ router.get(
 		
 		const { limit, page } = req.query as any;
 
+		let excludeList = [];
+
+		if (req.headers['user-id']) {
+			excludeList.push(req.headers['user-id'] as string)
+		}
+
 		// send user list
-		return res.json(await getUserList({ limit: limit, page: page }));
+		return res.json(await getUserList({ limit: limit, page: page }, excludeList));
 	}
 )
 

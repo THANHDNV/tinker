@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CircularProgress, Box, Container, makeStyles } from '@material-ui/core'
 import { useFetchUsers, useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
+import { AuthProvider, useAuthContext } from './store/context/auth';
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
@@ -38,29 +39,23 @@ const useStyles = makeStyles((theme) => ({
 	},
 }))
 
-function App(): React.ReactElement {
+const Layout = () => {
+	const { loading: authLoading } = useAuthContext();
 	const classes = useStyles();
 	const [page, setPage] = useState(0);
 	const [prefetchPage, setPrefetchPage] = useState(0);
-	const { data: { data } = { data: []}, loading } = useFetchUsers({
+
+	const { setFetch, data: { data } = { data: []}, loading } = useLazyFetchUsers({
 		page
 	});
 
-	const { setFetch, isFetching: isPreFetching  } = useLazyFetchUsers({
+	const { setFetch: setPreFetch, isFetching: isPreFetching  } = useLazyFetchUsers({
 		page: prefetchPage
 	});
 
-	if (loading) {
-		return (
-			<Box className={classes.wrapper} >
-				<Container className={classes.container}>
-					<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
-						<CircularProgress size="5rem" />
-					</Box>
-				</Container>
-			</Box>
-		)
-	}
+	useEffect(() => {
+		setFetch(!authLoading);
+	}, [loading]);
 
 	const onFetchNextPage = () => {
 		setPage((p) => p + 1);
@@ -69,17 +64,40 @@ function App(): React.ReactElement {
 	const onPrefetch = () => {
 		setPrefetchPage((p) => p + 1)
 		if (!isPreFetching ) {
-			setFetch(true);
+			setPreFetch(true);
 		}
 	}
 
-  return (
-		<Box minWidth="100wh" minHeight="100vh" className={classes.wrapper} >
-			<Container className={classes.container}>
-				<TinkerList users={data} className={classes.list} onPrefetch={onPrefetch} onFetchNextPage={onFetchNextPage} />
-			</Container>
-		</Box>
+	if (loading) {
+		return (
+			<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
+				<CircularProgress size="5rem" />
+			</Box>
+		)
+	}
+
+	return (
+		<TinkerList
+			users={data}
+			className={classes.list}
+			onPrefetch={onPrefetch}
+			onFetchNextPage={onFetchNextPage}
+		/>
   );
+}
+
+function App(): JSX.Element {
+	const classes = useStyles();
+
+	return (
+		<AuthProvider>
+			<Box className={classes.wrapper} >
+				<Container className={classes.container}>
+					<Layout />
+				</Container>
+			</Box>
+		</AuthProvider>
+	)
 }
 
 export default App;
