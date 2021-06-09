@@ -114,11 +114,13 @@ const Layout = () => {
 	}
 
 	if (limit * (currentPage + 1) > total && !users.length) {
-		<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
-			<Typography variant="body2">
-				Sorry, seems like no one left! Please comeback after a while!
-			</Typography>
-		</Box>
+		return (
+			<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
+				<Typography variant="body2">
+					Sorry, seems like no one left! Please comeback after a while!
+				</Typography>
+			</Box>
+		)
 	}
 
 	return (
