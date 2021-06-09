@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, Box, Container, makeStyles } from '@material-ui/core'
+import { CircularProgress, Box, Container, makeStyles, Typography } from '@material-ui/core'
 import { useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
 import { AuthProvider, useAuthContext } from './store/context/auth';
@@ -47,7 +47,23 @@ const Layout = () => {
 	const [prefetchPage, setPrefetchPage] = useState(0);
 	const [users, setUsers] = useState<IUser[]>([]);
 
-	const { setFetch, data: { data, showed: showedIds } = { data: [], showed: []}, loading } = useLazyFetchUsers({
+	const {
+		setFetch,
+		data: {
+			data,
+			showed: showedIds,
+			limit,
+			page: currentPage,
+			total
+		} = {
+			data: [],
+			showed: [],
+			limit: 10,
+			page: 0,
+			total: 0,
+		},
+		loading
+	} = useLazyFetchUsers({
 		page
 	});
 
@@ -59,12 +75,18 @@ const Layout = () => {
 		setFetch(!authLoading);
 	}, [authLoading]);
 
+	const onNextPage = () => {
+		if (limit * (currentPage + 1) < total) {
+			setPage((p) => p + 1);
+		}
+	}
+
 	useEffect(() => {
 		if (data && data.length) {
 			const filteredUser = data.filter((user) => !showedIds.some((id) => id === user.id))
 			
 			if (!filteredUser.length) {
-				setPage((p) => p + 1);
+				onNextPage()
 				return;
 			}
 
@@ -73,7 +95,7 @@ const Layout = () => {
 	}, [data, showedIds, setPage])
 
 	const onFetchNextPage = () => {
-		setPage((p) => p + 1);
+		onNextPage();
 	}
 
 	const onPrefetch = () => {
@@ -89,6 +111,14 @@ const Layout = () => {
 				<CircularProgress size="5rem" />
 			</Box>
 		)
+	}
+
+	if (limit * (currentPage + 1) > total && !users.length) {
+		<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
+			<Typography variant="body2">
+				Sorry, seems like no one left! Please comeback after a while!
+			</Typography>
+		</Box>
 	}
 
 	return (
