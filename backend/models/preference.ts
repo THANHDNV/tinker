@@ -39,7 +39,7 @@ const Preference = sequelize.define<PreferenceInstance>("Preference", {
 	updatedAt: DataTypes.DATE
 });
 
-Preference.belongsTo(UserModel, { foreignKey: "userId" })
-Preference.belongsTo(UserModel, { foreignKey: "targetId" })
+Preference.belongsTo(UserModel, { foreignKey: "userId", as: 'user' })
+Preference.belongsTo(UserModel, { foreignKey: "targetId", as: 'target' })
 
 export default Preference;

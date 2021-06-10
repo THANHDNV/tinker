@@ -26,7 +26,9 @@ const request = <ReponseDataType, BodyType>(params: IRequestParams<BodyType> = {
 			method,
 			body: JSON.stringify(body),
 			headers
-		}).then((response) => response.json());
+		}).then((response) => {
+			return response.json();
+		});
 	}
 
 export default request;

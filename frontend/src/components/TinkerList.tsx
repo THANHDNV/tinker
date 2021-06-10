@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, makeStyles, Grid, Button, Fade } from '@material-ui/core'
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
+import { mutate } from 'swr';
 import TinkerCard from './TinkerCard';
 import { useLike } from '../store/api/preference';
 
@@ -144,17 +145,15 @@ const TinkerList = ({
 	const onClickPass = () => {
 		if (activeUser) {
 			likeUser(false, activeUser);
+			onNext();
 		}
-		
-		onNext();
 	}
 
 	const onClickLike = () => {
 		if (activeUser) {
 			likeUser(true, activeUser);
+			onNext();
 		}
-
-		onNext();
 	}
 
 	if (users.length === 0) {

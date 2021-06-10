@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CircularProgress, Box, Container, makeStyles, Typography } from '@material-ui/core'
 import { useLazyFetchUsers } from './store/api/user';
 import TinkerList from './components/TinkerList';
+import Navbar from './components/Navbar';
 import { AuthProvider, useAuthContext } from './store/context/auth';
 import { IUser } from './types'
 
@@ -11,12 +12,23 @@ const useStyles = makeStyles((theme) => ({
 		minHeight: "100vh",
 		minWidth: "100vw"
 	},
+	inner: {
+		width:"100%",
+		height: "100%",
+		display: 'flex',
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: 'white'
+	},
 	list: {
 		height: '100%'
 	},
 	container: {
 		maxWidth: "500px",
-		height: "100vh"
+		height: "100vh",
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between',
 	},
 	actionWrapper: {
 		borderTop: "1px solid #d8dadf",
@@ -107,7 +119,7 @@ const Layout = () => {
 
 	if (loading) {
 		return (
-			<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
+			<Box className={classes.inner}>
 				<CircularProgress size="5rem" />
 			</Box>
 		)
@@ -115,7 +127,7 @@ const Layout = () => {
 
 	if (limit * (currentPage + 1) > total && !users.length) {
 		return (
-			<Box width="100%" height="100%" display='flex' justifyContent="center" alignItems="center">
+			<Box className={classes.inner}>
 				<Typography variant="body2">
 					Sorry, seems like no one left! Please comeback after a while!
 				</Typography>
@@ -140,6 +152,7 @@ function App(): JSX.Element {
 		<AuthProvider>
 			<Box className={classes.wrapper} >
 				<Container className={classes.container}>
+					<Navbar />
 					<Layout />
 				</Container>
 			</Box>

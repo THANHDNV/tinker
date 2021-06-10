@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import { query } from 'express-validator';
+import keyBy from 'lodash.keyby';
+import pick from 'lodash.pick';
 import { authenticate } from '../middleware';
 import {
 	getUserList,
@@ -8,15 +10,16 @@ import {
 	getPreference,
 	getPreferenceList,
 	getRandomUserId,
-	getPreferenceByIds
+	getPreferenceByIds,
+	getLikesToUser
 } from '../services';
 
 const router = Router();
 
 router.get(
 	'/',
-	query('limit').isInt({ min: 0, max: 15 }),
-	query('page').isInt({ min: 0 }),
+	query('limit').isInt({ min: 0, max: 15 }).toInt(),
+	query('page').isInt({ min: 0 }).toInt(),
 	async (req, res) => {
 		
 		const { limit, page } = req.query as any;
@@ -67,12 +70,25 @@ router.use(
 router.get(
 	'/preference',
 	authenticate,
-	query('limit').isInt({ min: 0, max: 15 }),
-	query('page').isInt({ min: 0 }),
+	query('limit').isInt({ min: 0, max: 15 }).toInt(),
+	query('page').isInt({ min: 0 }).toInt(),
 	async (req, res) => {
 		const userId: string = req.headers["user-id"] as string;
-		const { limit, page } = req.query as any;
-		return res.json(await getPreferenceList(userId, { limit: limit, page: page }));
+		const { limit, page } = req.query;
+
+		const { data, ...rest } = await getPreferenceList(userId, { limit: limit as any, page: page as any });
+		const matchedList = keyBy(await getLikesToUser(
+			data.filter((p) => p.isLiked).map((p) => p.targetId),
+			userId
+		));
+
+		return res.json({
+			data: data.map((p) => ({
+				...pick(p, ["userId", "targetId", "isLiked", "target"]),
+				matched: !!matchedList[p.targetId]
+			})),
+			...rest
+		});
 	}
 )
 

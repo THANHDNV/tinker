@@ -1,4 +1,4 @@
-import { Preference } from '../../models';
+import { Preference, User } from '../../models';
 import { PreferenceAttribute } from '../../models/preference';
 import { IGetList, IGetListResult } from '../types';
 
@@ -48,6 +48,11 @@ export const getPreferenceList = async (
 		where: {
 			userId
 		},
+		include: [{
+			model: User,
+			as: 'target'
+		}],
+		order: [["createdAt", "DESC"]],
 		limit,
 		offset,
 	});
@@ -73,4 +78,19 @@ export const likeUser = async (
 	});
 
 	return result;
+}
+
+export const getLikesToUser = async (
+	userIds: string[],
+	targetId: string
+): Promise<string[]> =>  {
+	const result = await Preference.findAll({
+		where: {
+			userId: userIds,
+			targetId,
+			isLiked: true
+		}
+	});
+
+	return result.map((p) => p.userId);
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { IPreference, IFetchPagination, IFetchListResponse, IFetchReturn } from '../../types'
+import { IPreference, IFetchPagination, IFetchListResponse, ILazyFetch, IUser } from '../../types'
 import request from '../../utils/request';
 import useCustomSWR from '../../utils/useCustomSwr';
 
@@ -18,8 +18,6 @@ export const useLike = (): ILikeUser => {
 	const [isLiked, setIsLiked] = useState<boolean>();
 	const [id, setId] = useState<string>();
 
-	const [isSetFlag, setIsSetFlag] = useState<boolean>( false);
-
 	const like = useCallback(request<IPreference, unknown>({
 		path: '/user/like',
 		method: 'post',
@@ -33,11 +31,9 @@ export const useLike = (): ILikeUser => {
 	}), [id]);
 
 	useEffect(() => {
-		if (isSetFlag) {
-			setIsSetFlag(false);
-
+		if (isLoading) {
 			const f = isLiked ? like : pass;
-
+	
 			f().then((response) => {
 				setData(response)
 				setError(undefined);
@@ -48,18 +44,13 @@ export const useLike = (): ILikeUser => {
 				setIsLoading(false);
 			})
 		}
-	}, [isSetFlag, isLiked, like, pass])
+	}, [isLoading, isLiked])
 
-	const onLike = (isLiked: boolean, userId: string) => {
-		if (userId) {
-			setIsLoading(true);
-
-			setId(userId);
-			setIsLiked(isLiked)
-
-			setIsSetFlag(true);
-		}
-	}
+	const onLike = useCallback((isLiked: boolean, userId: string) => {
+		setIsLoading(true);
+		setId(userId);
+		setIsLiked(isLiked);
+	}, [setIsLoading, setId, setIsLiked]);
 
 	return {
 		likeUser: onLike,
@@ -69,19 +60,28 @@ export const useLike = (): ILikeUser => {
 	};
 }
 
-export const useGetPreference = ({
+export interface IFetchPreference extends IPreference {
+	target: IUser;
+	matched: boolean;
+}
+
+export const useLazyFetchPreference = ({
 	limit = 10,
 	page = 0
-}: IFetchPagination = {}): IFetchReturn<IFetchListResponse<IPreference>> => {
-	const { data, error } = useCustomSWR<IFetchListResponse<IPreference>>({
+}: IFetchPagination = {}): ILazyFetch<IFetchListResponse<IFetchPreference>> => {
+	const [shouldFetch, setShouldFetch] = useState(false);
+	const { data, error } = useCustomSWR<IFetchListResponse<IFetchPreference>>({
 		path: '/user/preference',
 		query: {
 			limit: limit.toString(),
 			page: page.toString()
-		}
+		},
+		shouldFetch
 	})
 
 	return {
+		isFetching: shouldFetch,
+		setFetch: setShouldFetch,
 		data,
 		error,
 		loading: !data && !error
