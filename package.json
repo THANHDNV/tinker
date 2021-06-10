@@ -1,0 +1,20 @@
+{
+  "name": "tinker",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/THANHDNV/tinker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/THANHDNV/tinker/issues"
+  },
+  "homepage": "https://github.com/THANHDNV/tinker#readme",
+	"private": true,
+	"workspaces": ["frontend", "backend"]
+}
