@@ -14,8 +14,5 @@ services:
   #   build: .
   #   image: tinker-api:v1
   #   container_name: "tinker-api"
-  #   # command: yarn dev
-  #   # volumes:
-  #   #   - /tinker-api:/app
   #   ports:
   #     - 4040:4040

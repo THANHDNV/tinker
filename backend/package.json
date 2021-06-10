@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
     "start": "ts-node src/index.ts",
     "start:db": "yarn migrate && yarn seed",
     "migrate": "sequelize db:migrate",
