@@ -10,7 +10,9 @@ This project also comes with `docker-compose` to create a posgres database. You 
 * `POSTGRES_DB`: database name
 * `POSTGRES_USER`: database user
 * `POSTGRES_PASSWORD`: user password
+
 Do noted that the configuration need to match with `src/config/config.json` file for the API to connect with.
+If the `POSTGRES_DB` variable already match with database name in `config.json`, after creating the postgres container, you don't need to run `yarn sequelie db:create`
 You can also uncomment the lower parts of `docker-compose.yml` to build and create the API container.
 
 ## Migrating and Seeding
