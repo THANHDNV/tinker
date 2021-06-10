@@ -10,7 +10,9 @@ COPY yarn.lock /app
 
 RUN yarn
 
-COPY models/ app/models
+COPY migrations/ /app/migrations
+COPY seeders /app/seeders
+COPY models/ /app/models
 COPY src/ /app/src/
 
 EXPOSE 4040

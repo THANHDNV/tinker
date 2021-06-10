@@ -10,9 +10,18 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  # tinker-api:
-  #   build: .
-  #   image: tinker-api:v1
-  #   container_name: "tinker-api"
-  #   ports:
-  #     - 4040:4040
+    networks:
+      - local
+  tinker-api:
+    build: .
+    image: tinker-api:v1
+    container_name: "tinker-api"
+    environment:
+      NODE_ENV: test
+    ports:
+      - 4040:4040
+    networks:
+      - local
+networks:
+  local:
+    driver: bridge
